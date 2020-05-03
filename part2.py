@@ -1,6 +1,7 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 import random
+import utils
 import globals
 
 def load_data(filename):
@@ -44,6 +45,7 @@ def data_get_lable(data):
 def main():
     data = load_data('ElectionsData.csv')
     #raw data saved aside for future inspection
+    features_map = utils.map_features(data)
     raw_train, raw_val, raw_test = split_data(data)
     train, val, test = raw_train.copy(), raw_val.copy(), raw_test.copy()
     train_x, train_y = data_get_lable(train)
