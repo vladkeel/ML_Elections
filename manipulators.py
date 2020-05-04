@@ -1,0 +1,57 @@
+from features import FeatureType, CategoricalFeature, NominalFeature
+import globals
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+
+map_of_knns = {}
+
+
+def fill_row(row, target, features, feature_map):
+    if not pd.isna(row[target]):
+        return row
+    l_row = row.copy()
+    for feature in features:
+        if pd.isna(l_row[feature]):
+            l_row[feature] = feature_map[feature].replacement()
+    row[target] = map_of_knns[target].predict([l_row[features]])
+    return row
+
+
+def fill_empty(data, feature_list, feature_map):
+    train_data = data.dropna()
+    print('Filling empty values')
+    num = len(feature_list)
+    i = 1
+    for target in feature_list:
+        print(' Making knn for feature {} number {} of {}'.format(target, i, num))
+        i += 1
+        origs = feature_list.copy()
+        origs.remove(target)
+        if isinstance(feature_map[target], CategoricalFeature):
+            map_of_knns[target] = KNeighborsClassifier(n_neighbors=10)
+        else:
+            map_of_knns[target] = KNeighborsRegressor(n_neighbors=10)
+        map_of_knns[target].fit(train_data[origs], train_data[target])
+    i = 1
+    for target in feature_list:
+        print(' Completing feature {} number {} of {}'.format(target, i, num))
+        i += 1
+        origs = feature_list.copy()
+        origs.remove(target)
+        data.apply(fill_row, axis=1, target=target, features=origs, feature_map=feature_map)
+        #data[target].fillna(fill_row(data[origs], target, origs, feature_map))
+    return data
+
+
+def clip_outliers(data, features, feature_map):
+    for feature in features:
+        if isinstance(feature_map[feature], NominalFeature):
+            data[feature] = data[feature].clip(lower=feature_map[feature].LF, upper=feature_map[feature].UF)
+    return data
+
+
+def enumerate_attrs(data):
+    for feature in globals.categorical_features:
+        data[feature] = data[feature].map(globals.translator[feature])
+    return data

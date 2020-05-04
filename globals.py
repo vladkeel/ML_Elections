@@ -1,9 +1,16 @@
-party_lables = {'Yellows':0, 'Blues':1, 'Reds':2, 'Greens':3, 'Browns':4, 'Purple':5,
-                'Turquoises':6, 'Pinks':7, 'Greys':8, 'Whites':9, 'Oranges':10}
+categorical_features = ['Vote', 'Age_group', 'Looking_at_poles_results', 'Gender', 'Married', 'Voting_Time',
+                        'Will_vote_only_large_party', 'Most_Important_Issue', 'Main_transportation',
+                        'Occupation', 'Financial_agenda_matters']
 
-age_groups = {'Below_30':0, '30-45':1, '45_and_up':2}
 
-bool_lables = {'No':0, 'Yes':1, 'Maybe':2}
+party_lables = {'Yellows': 0, 'Whites': 1, 'Violets': 2, 'Turquoises': 3, 'Reds': 4, 'Purples': 5, 'Pinks': 6,
+                'Oranges': 7, 'Khakis': 8, 'Greys': 9, 'Greens': 10, 'Browns': 11, 'Blues': 12}
+
+age_groups = {'Below_30': 0, '30-45': 1, '45_and_up': 2}
+
+bool_lables = {'No': 0, 'Yes': 1}
+
+will_vote_lables = {'No': 0, 'Yes': 1, 'Maybe': 2}
 
 gender_lables = {'Female':0, 'Male':1}
 
@@ -16,4 +23,10 @@ transport_lables = {'Public_or_other':0, 'Car':1, 'Motorcycle_or_truck':2, 'Foot
 
 occupation_lables = {'Industry_or_other':0, 'Services_or_Retail':1, 'Public_Sector':2,
                      'Student_or_Unemployed':3, 'Hightech':4}
+
+translator = {'Vote': party_lables, 'Age_group': age_groups, 'Looking_at_poles_results': bool_lables,
+              'Gender': gender_lables, 'Married': bool_lables, 'Voting_Time': time_lables,
+              'Will_vote_only_large_party': will_vote_lables, 'Most_Important_Issue': issues_lables,
+              'Main_transportation': transport_lables, 'Occupation': occupation_lables,
+              'Financial_agenda_matters': bool_lables}
 
