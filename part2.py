@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 from features import FeatureType, CategoricalFeature, NominalFeature, map_features
+from featureSelection import mutal_information_filter
 import globals
 import manipulators
 
@@ -34,6 +35,7 @@ def main():
     features = list(features_map.keys())
     data = manipulators.fill_empty(data, features, features_map)
     data = manipulators.clip_outliers(data, features, features_map)
+    mutal_information_filter(data, features)
 
     raw_train, raw_val, raw_test = split_data(data)
     train, val, test = raw_train.copy(), raw_val.copy(), raw_test.copy()

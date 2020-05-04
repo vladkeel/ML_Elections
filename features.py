@@ -15,8 +15,8 @@ class Feature:
 
 
 class CategoricalFeature(Feature):
-    def __init__(self, f_type, feature):
-        super(CategoricalFeature, self).__init__(f_type)
+    def __init__(self, feature):
+        super(CategoricalFeature, self).__init__(FeatureType.CATEGORICAL)
         self.values_list = feature.unique()
         self.common = feature.mode()[0]
 
@@ -25,8 +25,8 @@ class CategoricalFeature(Feature):
 
 
 class NominalFeature(Feature):
-    def __init__(self, f_type, feature):
-        super(NominalFeature, self).__init__(f_type)
+    def __init__(self, feature):
+        super(NominalFeature, self).__init__(FeatureType.NOMINAL)
         self.mean = feature.mean()
         self.median = feature.median()
         self.Q1 = feature.quantile(0.25)
@@ -41,9 +41,9 @@ class NominalFeature(Feature):
 
 def map_feature(name, feature):
     if name in globals.categorical_features:
-        return CategoricalFeature(FeatureType.CATEGORICAL, feature)
+        return CategoricalFeature(feature)
     else:
-        return NominalFeature(FeatureType.NOMINAL, feature)
+        return NominalFeature(feature)
 
 
 def map_features(data):
