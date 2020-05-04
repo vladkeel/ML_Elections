@@ -1,8 +1,8 @@
-from features import FeatureType, CategoricalFeature, NominalFeature
+from features import CategoricalFeature, NominalFeature
 import globals
-import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.preprocessing import normalize
 
 NUMBER_OF_NEIGHBORS = 10
 
@@ -58,3 +58,10 @@ def enumerate_attrs(data):
     for feature in globals.categorical_features:
         data[feature] = data[feature].map(globals.translator[feature])
     return data
+
+
+def normalize_features(data, features, feature_map):
+    for feature in features:
+        if isinstance(feature_map[feature], CategoricalFeature):
+            continue
+        data[feature] = normalize(data[feature], norm='l2')

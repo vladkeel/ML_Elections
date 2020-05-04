@@ -1,29 +1,8 @@
-import pandas as pd
-import numpy as np
-import random
-from features import FeatureType, CategoricalFeature, NominalFeature, map_features
-from featureSelection import mutal_information_filter
-import globals
+from features import map_features
+import featureSelection
 import manipulators
-
-
-def load_data(filename):
-    data = pd.read_csv(r'ElectionsData.csv', header=0)
-    return data
-
-
-def split_data(data):
-    data_size = len(data.index)
-    indices = list(range(data_size))
-    random.shuffle(indices)
-    train = data.iloc[indices[:int(data_size*0.75)], :]
-    val = data.iloc[indices[int(data_size*0.75):int(data_size*0.9)], :]
-    test = data.iloc[indices[int(data_size*0.9):], :]
-    return train, val, test
-
-
-def data_get_label(data):
-    return data.drop('Vote', axis=1), data['Vote']
+from utils import data_get_label, load_data, split_data
+from sklearn.ensemble import RandomForestClassifier
 
 
 def main():
@@ -33,9 +12,13 @@ def main():
     data = manipulators.enumerate_attrs(data)
     features_map = map_features(data)
     features = list(features_map.keys())
+    features.remove('Vote')
     data = manipulators.fill_empty(data, features, features_map)
     data = manipulators.clip_outliers(data, features, features_map)
-    mutal_information_filter(data, features)
+    data = manipulators.normalize_features(data, features, features_map)
+    featureSelection.mutal_information_filter(data, features)
+    featureSelection.bds(data, features, RandomForestClassifier(n_estimators=100))
+    featureSelection.iterative_k_best(data, RandomForestClassifier(n_estimators=100))
 
     raw_train, raw_val, raw_test = split_data(data)
     train, val, test = raw_train.copy(), raw_val.copy(), raw_test.copy()
