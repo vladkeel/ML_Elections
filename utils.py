@@ -19,3 +19,7 @@ def split_data(data):
     val = data.iloc[indices[int(data_size*0.75):int(data_size*0.9)], :]
     test = data.iloc[indices[int(data_size*0.9):], :]
     return train, val, test
+
+def print_to_file(str, file):
+    with open(file, 'a') as f:
+        print(str, file=f)
