@@ -1,4 +1,4 @@
-categorical_features = ['Vote', 'Age_group', 'Looking_at_poles_results', 'Gender', 'Married', 'Voting_Time',
+categorical_features = ['Age_group', 'Looking_at_poles_results', 'Gender', 'Married', 'Voting_Time',
                         'Will_vote_only_large_party', 'Most_Important_Issue', 'Main_transportation',
                         'Occupation', 'Financial_agenda_matters']
 

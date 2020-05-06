@@ -20,23 +20,30 @@ def main():
     train_x = manipulators.enumerate_attrs(train_x)
     val_x = manipulators.enumerate_attrs(val_x)
     test_x = manipulators.enumerate_attrs(test_x)
+
+    train_y = manipulators.enumerate_lable(train_y)
+    val_y = manipulators.enumerate_lable(val_y)
+    test_y = manipulators.enumerate_lable(test_y)
+
     features_map = map_features(train_x)
     features = list(features_map.keys())
 
     filler = manipulators.NAFiller()
-    filler.fit(data, features, features_map)
-    normalizer = manipulators.DataNormalizer()
-    normalizer.fit(data, features, features_map)
-    one_hot = manipulators.OneHot()
-    one_hot.fit(data, features, features_map)
+    filler.fit(train_x, features, features_map)
 
     train_x = filler.transform(train_x, features, features_map)
     val_x = filler.transform(val_x, features, features_map)
     test_x = filler.transform(test_x, features, features_map)
 
+    normalizer = manipulators.DataNormalizer()
+    normalizer.fit(train_x, features, features_map)
+
     train_x = normalizer.transform(train_x, features, features_map)
     val_x = normalizer.transform(val_x, features, features_map)
     test_x = normalizer.transform(test_x, features, features_map)
+
+    one_hot = manipulators.OneHot()
+    one_hot.fit(train_x, features, features_map)
 
     train_x = one_hot.transform(train_x, features, features_map)
     val_x = one_hot.transform(val_x, features, features_map)

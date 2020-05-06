@@ -35,7 +35,7 @@ class NAFiller:
 
     def transform(self, data, feature_list, feature_map):
         for i, target in enumerate(feature_list):
-            print(f'{i},', end='')
+            #print(f'{i},', end='')
             origs = feature_list.copy()
             origs.remove(target)
             data = data.apply(self._fill_row, axis=1, target=target, features=origs, feature_map=feature_map)
@@ -77,6 +77,11 @@ def enumerate_attrs(data):
     return data
 
 
+def enumerate_lable(y):
+    y = y.map(globals.translator['Vote'])
+    return y
+
+
 class OneHot:
     def __init__(self):
         self.encoders = {}
@@ -85,13 +90,13 @@ class OneHot:
         for feature in features:
             if isinstance(feature_map[feature], CategoricalFeature):
                 self.encoders[feature] = preprocessing.OneHotEncoder(handle_unknown='ignore')
-                self.encoders[feature].fit(data[feature])
-                feature_map[feature].sub_features = self.encoders[feature].get_feature_names(['feature'])
+                self.encoders[feature].fit(data[[feature]])
+                feature_map[feature].sub_features = self.encoders[feature].get_feature_names([feature])
 
     def transform(self, data, features, feature_map):
         for feature in features:
             if isinstance(feature_map[feature], CategoricalFeature):
-                new_features = self.encoders[feature].transform(data[feature])
+                new_features = self.encoders[feature].transform(data[[feature]])
                 new_names = feature_map[feature].sub_features
                 for i, sub_feat in enumerate(new_names):
                     data[sub_feat] = pd.DataFrame(new_features[:, i], columns=[sub_feat], index=data.index)

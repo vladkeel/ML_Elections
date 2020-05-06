@@ -59,7 +59,6 @@ def map_feature(name, feature):
 def map_features(data):
     feature_map = {}
     features = list(data.columns)
-    features.remove('Vote')
     for feature in features:
         feature_map[feature] = map_feature(feature, data[feature])
     return feature_map
