@@ -57,76 +57,49 @@ def iterative_k_best(data, clf, eps=1e-8):
         print_to_file('{},{},{}'.format(i+1,res_for_k[i][0], ','.join(res_for_k[i][1])), 'itk.csv')
 
 
-def bds(data, features, feature_map, clf):  # free palestine
+def sfs(data, features, feature_map, clf, outfile, eps=1e-8):
     X, y = data_get_label(data)
     selected_features = []
-    dropped_features = []
+    selected_features_extended = []
     scores = []
-    front_selected_features = []
-    back_selected_features = list(X.columns)
-    front_last_score = 0
-    back_last_score = 0
-    epoch=0
-    print_to_file('Bi-directional search:', 'bds.csv')
-    while not set(front_selected_features) == set(back_selected_features):
-        forward_best_score = 0
+    score_diff = 1
+    last_score = 0
+    epoch = 0
+    print_to_file('Sequential forward selection search:', outfile)
+    candidates = features.copy()
+    while score_diff > eps:
         best_feature = None
-        backward_best_score = 0
-        worst_feature = None
-        epoch +=1
+        forward_best_score = 0
+        epoch += 1
         # Forward search
-        for feature in features:
-            if feature in dropped_features or feature in selected_features:
-                continue
-            temp_features = front_selected_features.copy()
+        for feature in candidates:
+            temp_features = selected_features_extended.copy()
             if isinstance(feature_map[feature], CategoricalFeature):
                 temp_features.extend(feature_map[feature].sub_features)
             else:
                 temp_features.append(feature)
             test_data = X[temp_features]
-            score = cross_val_score(estimator=clf, X=test_data, y=y, cv=5).mean()
+            score = cross_val_score(estimator=clf, X=test_data, y=y, cv=4).mean()
             if score > forward_best_score:
                 forward_best_score = score
                 best_feature = feature
-
-        # Backward search
-        for feature in features:
-            if feature in selected_features or feature in dropped_features:
-                continue
-            temp_features = back_selected_features.copy()
-            if isinstance(feature_map[feature], CategoricalFeature):
-                for sub_f in feature_map[feature].sub_features:
-                    temp_features.remove(sub_f)
-            else:
-                temp_features.remove(feature)
-            test_data = X[temp_features]
-            score = cross_val_score(estimator=clf, X=test_data, y=y, cv=5).mean()
-            if score > backward_best_score:
-                backward_best_score = score
-                worst_feature = feature
-
-        # Which direction improves more
-        # If stuck in local minimum: force forward search
-        if (forward_best_score < front_last_score and back_last_score < back_last_score) or \
-                (forward_best_score - front_last_score > backward_best_score - back_last_score):
-            front_last_score = forward_best_score
-            selected_features.append(best_feature)
-            if isinstance(feature_map[best_feature], CategoricalFeature):
-                front_selected_features.extend(feature_map[best_feature].sub_features)
-            scores.append(forward_best_score)
-            print(f'{epoch}:up,', end='')
+        score_diff = forward_best_score - last_score
+        if score_diff < eps:
+            break
+        last_score = forward_best_score
+        selected_features.append(best_feature)
+        scores.append(last_score)
+        candidates.remove(best_feature)
+        if isinstance(feature_map[best_feature], CategoricalFeature):
+            selected_features_extended.extend(feature_map[best_feature].sub_features)
         else:
-            back_last_score = backward_best_score
-            dropped_features.remove(worst_feature)
-            if isinstance(feature_map[worst_feature], CategoricalFeature):
-                for sub_f in feature_map[worst_feature].sub_features:
-                    back_selected_features.remove(sub_f)
-            else:
-                back_selected_features.remove(worst_feature)
-            print(f'{epoch}:down,', end='')
+            selected_features_extended.append(best_feature)
+        print(f'{epoch},', end='')
     ret_val = [(selected_features[i], scores[i]) for i in range(len(selected_features))]
     ret_val.sort(key=lambda x: x[1], reverse=True)
-    print_to_file('Features and scores for Bi-directional search:', 'bds.csv')
-    print_to_file('Feature,Score', 'bds.csv')
+    print_to_file('Features and scores for Sequential forward search:', outfile)
+    print_to_file('Feature,Score', outfile)
     for feature in ret_val:
-        print_to_file('{},{}'.format(feature[0], feature[1]), 'bds.csv')
+        print_to_file('{},{}'.format(feature[0], feature[1]), outfile)
+
+    return selected_features

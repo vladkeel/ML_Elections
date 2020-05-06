@@ -3,6 +3,8 @@ import featureSelection
 import manipulators
 from utils import data_get_label, load_data, split_data
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 
 
 def main():
@@ -17,8 +19,11 @@ def main():
     data = manipulators.normalize_features(data, features, features_map)
     data, features, features_map = featureSelection.mutal_information_filter(data, features, features_map)
     data = manipulators.one_hot(data, features, features_map)
-    featureSelection.bds(data, features, features_map, RandomForestClassifier(n_estimators=100))
-    featureSelection.iterative_k_best(data, features_map, RandomForestClassifier(n_estimators=100))
+    #sfs with knn
+    sfs_knn_features = featureSelection.sfs(data, features, features_map, KNeighborsClassifier(n_neighbors=200), 'sfs_knn.csv')
+    #sfs with svm
+    sfs_svm_features = featureSelection.sfs(data, features, features_map, SVC(gamma='auto'), 'sfs_svm.csv')
+    #featureSelection.iterative_k_best(data, RandomForestClassifier(n_estimators=100))
 
     raw_train, raw_val, raw_test = split_data(data)
     train, val, test = raw_train.copy(), raw_val.copy(), raw_test.copy()
