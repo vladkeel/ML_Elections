@@ -5,17 +5,29 @@ from sklearn.feature_selection import SelectKBest, chi2
 from utils import data_get_label, print_to_file
 from features import CategoricalFeature, NominalFeature
 
-FILTER_THRESHOLD = 1
+
+FILTER_THRESHOLD = 0.99
 
 
-def mutal_information_filter(data, feature_list):
+def mutal_information_filter(data, feature_list, features_map):
     print_to_file(f' Computing Mutual Information Scores', 'mutual.txt')
     scores = np.zeros((len(feature_list), len(feature_list)))
     for i, feature in enumerate(feature_list):
         for j, feature2 in enumerate(feature_list):
             scores[i][j] = normalized_mutual_info_score(data[feature], data[feature2]) if i != j else 0
-        print_to_file(f' final scores:\n{scores}\n end', 'mutual.txt')
-    return data, feature_list
+    print_to_file(f' final scores:\n{scores}\n end', 'mutual.txt')
+    over_threshold = [sum([1 for i in j if i > FILTER_THRESHOLD]) for j in scores]
+    while any(i > 0 for i in over_threshold):
+        max_index = over_threshold.index(max(over_threshold))
+        print_to_file(f' Deleting feature number {max_index} which is {feature_list[max_index]}', 'mutual.txt')
+        scores = np.delete(scores, max_index, 0)
+        scores = np.delete(scores, max_index, 1)
+        data.drop(feature_list[max_index], axis=1)
+        features_map.pop(feature_list[max_index])
+        feature_list.pop(max_index)
+        over_threshold = [sum(1 for i in j if i > FILTER_THRESHOLD) for j in scores]
+    print_to_file(f' Feature list after filter {feature_list} for total of {len(feature_list)} features', 'mutual.txt')
+    return data, feature_list, features_map
 
 
 def select_k_best(X, y, k):

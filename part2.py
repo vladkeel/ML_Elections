@@ -15,7 +15,7 @@ def main():
     data = manipulators.fill_empty(data, features, features_map)
     data = manipulators.clip_outliers(data, features, features_map)
     data = manipulators.normalize_features(data, features, features_map)
-    featureSelection.mutal_information_filter(data, features)
+    data, features, features_map = featureSelection.mutal_information_filter(data, features, features_map)
     data = manipulators.one_hot(data, features, features_map)
     featureSelection.bds(data, features, features_map, RandomForestClassifier(n_estimators=100))
     featureSelection.iterative_k_best(data, features_map, RandomForestClassifier(n_estimators=100))
