@@ -59,8 +59,7 @@ def iterative_k_best(data, clf, eps=1e-8):
         print_to_file('{},{},{}'.format(i+1,res_for_k[i][0], ','.join(res_for_k[i][1])), 'itk.csv')
 
 
-def sfs(data, features, feature_map, clf, outfile, eps=1e-8):
-    X, y = data_get_label(data)
+def sfs(X, y, features, feature_map, clf, outfile, eps=1e-8):
     selected_features = []
     selected_features_extended = []
     scores = []
