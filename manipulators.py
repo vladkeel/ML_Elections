@@ -99,7 +99,8 @@ class OneHot:
                 new_features = self.encoders[feature].transform(data[[feature]])
                 new_names = feature_map[feature].sub_features
                 for i, sub_feat in enumerate(new_names):
-                    data[sub_feat] = pd.DataFrame(new_features[:, i], columns=[sub_feat], index=data.index)
+                    column = new_features[:,0].A.flatten()
+                    data[sub_feat] = pd.DataFrame(column, columns=[sub_feat], index=data.index)
                 data = data.drop(feature, axis=1)
         return data
 
