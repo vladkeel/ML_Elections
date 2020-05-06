@@ -12,10 +12,12 @@ FILTER_THRESHOLD = 0.99
 def mutal_information_filter(data, feature_list, features_map):
     print_to_file(f' Computing Mutual Information Scores', 'mutual.txt')
     scores = np.zeros((len(feature_list), len(feature_list)))
+    print_to_file(',{}'.format(','.join(feature_list)), 'mutual.txt')
     for i, feature in enumerate(feature_list):
         for j, feature2 in enumerate(feature_list):
             scores[i][j] = normalized_mutual_info_score(data[feature], data[feature2]) if i != j else 0
-    print_to_file(f' final scores:\n{scores}\n end', 'mutual.txt')
+        print_to_file('{},{}'.format(feature_list[i], ','.join([str(x) for x in scores[i]])), 'mutual.txt')
+    #print_to_file(f' final scores:\n{scores}\n end', 'mutual.txt')
     over_threshold = [sum([1 for i in j if i > FILTER_THRESHOLD]) for j in scores]
     while any(i > 0 for i in over_threshold):
         max_index = over_threshold.index(max(over_threshold))
