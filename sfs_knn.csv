@@ -1,0 +1,15 @@
+Sequential forward selection search:
+Features and scores for Sequential forward search:
+Feature,Score
+Married,0.8754730015041806
+Avg_environmental_importance,0.8737408045977885
+Most_Important_Issue,0.8728059476339087
+Political_interest_Total_Score,0.8713380337726354
+Avg_education_importance,0.8680079755598336
+Phone_minutes_10_years,0.8652095436200573
+Avg_monthly_expense_on_pets_or_plants,0.8620102176411223
+Number_of_differnt_parties_voted_for,0.8568014667560828
+Last_school_grades,0.8542750319184256
+Avg_size_per_room,0.8194906712663
+Overall_happiness_score,0.6673326761330604
+Weighted_education_rank,0.4661377776872545

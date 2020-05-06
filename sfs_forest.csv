@@ -1,0 +1,11 @@
+Sequential forward selection search:
+Features and scores for Sequential forward search:
+Feature,Score
+Financial_agenda_matters,0.9360132690818743
+Avg_environmental_importance,0.9346811779430876
+Avg_monthly_income_all_years,0.9338843560848702
+Number_of_differnt_parties_voted_for,0.915742428029661
+Last_school_grades,0.893755485401587
+Avg_size_per_room,0.8362782380569979
+Overall_happiness_score,0.6634634213734831
+Weighted_education_rank,0.3789094802496732

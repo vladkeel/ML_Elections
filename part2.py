@@ -1,12 +1,11 @@
 from features import map_features
 import featureSelection
 import manipulators
-from utils import data_get_label, load_data, split_data
+from utils import data_get_label, load_data, split_data, plot_features, test_with_clf
 from sklearn.ensemble import RandomForestClassifier
 from heatmap import heatmap, annotate_heatmap
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 
 
 def main():
@@ -30,6 +29,8 @@ def main():
     features_map = map_features(train_x)
     features = list(features_map.keys())
 
+    #plot_features(train_x, features)
+
     filler = manipulators.NAFiller()
     filler.fit(train_x, features, features_map)
 
@@ -51,22 +52,31 @@ def main():
     val_x = one_hot.transform(val_x, features, features_map)
     test_x = one_hot.transform(test_x, features, features_map)
 
-    mi_scores = featureSelection.new_mutual_info_filter(test_x_c, features, features_map)
-    fig, ax = plt.subplots()
-    im, cbar = heatmap(mi_scores, features, features, ax=ax,
-                       cmap="YlGn", cbarlabel="MI Score")
-    texts = annotate_heatmap(im, valfmt="{x:.1f} t")
-    fig.tight_layout()
-    plt.show()
+    #mi_scores, mi_features = featureSelection.new_mutual_info_filter(test_x_c, features, features_map)
+    #fig, ax = plt.subplots()
+    #im, cbar = heatmap(mi_scores, features, features, ax=ax,
+    #                   cmap="YlGn", cbarlabel="MI Score")
+    #texts = annotate_heatmap(im, valfmt="{x:.1f} t")
+    #fig.tight_layout()
+    #plt.show()
 
     #test_x_n, feature_list, features_map = featureSelection.mutal_information_filter(test_x_n, features, features_map)
     #sfs with knn
-    sfs_knn_features = featureSelection.sfs(train_x, train_y, features, features_map, KNeighborsClassifier(n_neighbors=20), 'sfs_knn.csv')
+    sfs_knn_features = featureSelection.sfs(train_x, train_y, features, features_map, KNeighborsClassifier(n_neighbors=5), 'sfs_knn.csv')
     #sfs with svm
-    sfs_svm_features = featureSelection.sfs(train_x, train_y, features, features_map, RandomForestClassifier(n_estimators=20), 'sfs_forest.csv')
-    #featureSelection.iterative_k_best(data, RandomForestClassifier(n_estimators=100))
+    sfs_svm_features = featureSelection.sfs(train_x, train_y, features, features_map, RandomForestClassifier(n_estimators=100), 'sfs_forest.csv')
+    k_best = featureSelection.select_k_best(train_x, train_y, 15)
 
-    a = 0
+    #Test the features:
+    clf = KNeighborsClassifier(n_neighbors=5)
+    #r_mi = test_with_clf(train_x, train_y, val_x, val_y, mi_features, features_map, clf)
+    r_sfs_knn = test_with_clf(train_x, train_y, val_x, val_y, sfs_knn_features, features_map, clf)
+    r_sfs_forest = test_with_clf(train_x, train_y, val_x, val_y, sfs_svm_features, features_map, clf)
+    #r_k_best = test_with_clf(train_x, train_y, val_x, val_y, k_best, features_map, clf)
+    #print('For mutual information filtering: {}'.format(r_mi))
+    print('SFS with KNN: {}'.format(r_sfs_knn))
+    print('SFS with random forest: {}'.format(r_sfs_forest))
+    #print('select K best (15): {}'.format(r_k_best))
 
 
 if __name__ == '__main__':

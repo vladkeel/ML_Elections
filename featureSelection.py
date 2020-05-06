@@ -28,7 +28,20 @@ def new_mutual_info_filter(data, feature_list, features_map):
         for j in range(i+1,features_num):
             scores[i][j] = f_scores[j-1]
         print_to_file('{},{}'.format(feature_list[i], ','.join([str(x) for x in scores[i]])), 'mutual.txt')
-    return scores
+    print_to_file('overall there are {} pairs of strongly corelated features'.format(len(scores[scores > 3])/2),
+                  'mutual.txt')
+    indices = np.nonzero(scores > 3)
+    indices_fix = []
+    for i in range(len(indices[0])):
+        indices_fix.append((min(indices[0][i], indices[1][i]), max(indices[0][i], indices[1][i])))
+        indices_fix = list(set(indices_fix))
+    for ind in indices_fix:
+        print_to_file('Features {} and {} with score {}'.format(feature_list[ind[0]],
+                                                                feature_list[ind[1]], scores[ind[0]][ind[1]]),
+                      'mutual.txt')
+        print_to_file('Dropping feature {}'.format(feature_list[ind[1]]), 'mutual.txt')
+        feature_list.remove(feature_list[ind[1]])
+    return scores, feature_list
 
 
 
@@ -68,7 +81,11 @@ def select_k_best(X, y, k):
     clf = SelectKBest(chi2, k=k)
     clf.fit(X,y)
     features_mask = clf.get_support()
-    return [b for a, b in zip(features, features_mask) if a]
+    new_features = [a for a, b in zip(features, features_mask) if b]
+    print_to_file('List of {} features selected by select k best'.format(k), 'select_k_best.txt')
+    for feat in new_features:
+        print_to_file(feat, 'select_k_best.txt')
+    return new_features
 
 
 def iterative_k_best(data, clf, eps=1e-8):

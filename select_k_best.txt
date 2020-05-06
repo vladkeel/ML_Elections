@@ -1,0 +1,16 @@
+List of 15 features selected by select k best
+Avg_monthly_expense_on_pets_or_plants
+Avg_Satisfaction_with_previous_vote
+Last_school_grades
+Number_of_differnt_parties_voted_for
+Political_interest_Total_Score
+Married_0.0
+Married_1.0
+Most_Important_Issue_0.0
+Most_Important_Issue_1.0
+Most_Important_Issue_2.0
+Most_Important_Issue_3.0
+Most_Important_Issue_4.0
+Most_Important_Issue_5.0
+Most_Important_Issue_6.0
+Most_Important_Issue_7.0

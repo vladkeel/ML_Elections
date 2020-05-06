@@ -47,6 +47,7 @@ class DataNormalizer:
         self.scalers = {}
 
     def fit(self, data, features, feature_map):
+
         for feature in features:
             if isinstance(feature_map[feature], CategoricalFeature):
                 continue
