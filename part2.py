@@ -74,9 +74,16 @@ def main():
     r_sfs_forest = test_with_clf(train_x, train_y, val_x, val_y, sfs_svm_features, features_map, clf)
     #r_k_best = test_with_clf(train_x, train_y, val_x, val_y, k_best, features_map, clf)
     #print('For mutual information filtering: {}'.format(r_mi))
-    print('SFS with KNN: {}'.format(r_sfs_knn))
-    print('SFS with random forest: {}'.format(r_sfs_forest))
+    #print('SFS with KNN: {}'.format(r_sfs_knn))
+    #print('SFS with random forest: {}'.format(r_sfs_forest))
     #print('select K best (15): {}'.format(r_k_best))
+
+    train_x.to_csv('train_data.csv', index=False)
+    train_y.to_csv('train_lables.csv', index=False)
+    val_x.to_csv('val_data.csv', index=False)
+    val_y.to_csv('val_labels.csv', index=False)
+    test_x.to_csv('test_data.csv', index=False)
+    test_y.to_csv('test_labels.csv', index=False)
 
 
 if __name__ == '__main__':
