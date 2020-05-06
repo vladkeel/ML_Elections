@@ -38,23 +38,22 @@ def main():
     normalizer = manipulators.DataNormalizer()
     normalizer.fit(train_x, features, features_map)
 
-    train_x = normalizer.transform(train_x, features, features_map)
-    val_x = normalizer.transform(val_x, features, features_map)
-    test_x = normalizer.transform(test_x, features, features_map)
+    train_x_n = normalizer.transform(train_x, features, features_map)
+    val_x_n = normalizer.transform(val_x, features, features_map)
+    test_x_n = normalizer.transform(test_x, features, features_map)
 
     one_hot = manipulators.OneHot()
     one_hot.fit(train_x, features, features_map)
 
-    train_x = one_hot.transform(train_x, features, features_map)
-    val_x = one_hot.transform(val_x, features, features_map)
-    test_x = one_hot.transform(test_x, features, features_map)
+    train_x = one_hot.transform(train_x_n, features, features_map)
+    val_x = one_hot.transform(val_x_n, features, features_map)
+    test_x = one_hot.transform(test_x_n, features, features_map)
 
-
-
+    #test_x_n, feature_list, features_map = featureSelection.mutal_information_filter(test_x_n, features, features_map)
     #sfs with knn
     sfs_knn_features = featureSelection.sfs(train_x, train_y, features, features_map, KNeighborsClassifier(n_neighbors=5), 'sfs_knn.csv')
     #sfs with svm
-    #sfs_svm_features = featureSelection.sfs(train_x, train_y, features, features_map, RandomForestClassifier(n_estimators=100), 'sfs_forest.csv')
+    sfs_svm_features = featureSelection.sfs(train_x, train_y, features, features_map, RandomForestClassifier(n_estimators=100), 'sfs_forest.csv')
     #featureSelection.iterative_k_best(data, RandomForestClassifier(n_estimators=100))
 
     a = 0

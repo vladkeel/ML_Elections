@@ -80,7 +80,7 @@ def sfs(X, y, features, feature_map, clf, outfile, eps=1e-8):
             else:
                 temp_features.append(feature)
             test_data = X[temp_features]
-            score = cross_val_score(estimator=clf, X=test_data, y=y, cv=4).mean()
+            score = cross_val_score(estimator=clf, X=test_data, y=y, cv=5).mean()
             if score > forward_best_score:
                 forward_best_score = score
                 best_feature = feature
