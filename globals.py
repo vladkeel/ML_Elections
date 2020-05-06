@@ -2,6 +2,10 @@ categorical_features = ['Age_group', 'Looking_at_poles_results', 'Gender', 'Marr
                         'Will_vote_only_large_party', 'Most_Important_Issue', 'Main_transportation',
                         'Occupation', 'Financial_agenda_matters']
 
+discrete_features = ['Occupation_Satisfaction', 'Yearly_IncomeK', 'Last_school_grades',
+                     'Number_of_differnt_parties_voted_for', 'Number_of_valued_Kneset_members',
+                     'Num_of_kids_born_last_10_years']
+
 
 party_lables = {'Yellows': 0, 'Whites': 1, 'Violets': 2, 'Turquoises': 3, 'Reds': 4, 'Purples': 5, 'Pinks': 6,
                 'Oranges': 7, 'Khakis': 8, 'Greys': 9, 'Greens': 10, 'Browns': 11, 'Blues': 12}

@@ -1,20 +1,49 @@
 import numpy as np
 from sklearn.metrics import normalized_mutual_info_score
 from sklearn.model_selection import cross_val_score
-from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.feature_selection import SelectKBest, chi2, mutual_info_classif, mutual_info_regression
 from utils import data_get_label, print_to_file
-from features import CategoricalFeature, NominalFeature
+from features import CategoricalFeature, NominalFeature, FeatureType
 
 
 FILTER_THRESHOLD = 0.99
+
+def new_mutual_info_filter(data, feature_list, features_map):
+    features_num = len(feature_list)
+    scores = np.zeros((features_num, features_num))
+    print_to_file(f' Computing Mutual Information Scores', 'mutual.txt')
+    print_to_file(',{}'.format(','.join(feature_list)), 'mutual.txt')
+    for i, target in enumerate(feature_list):
+        temp_list = feature_list.copy()
+        temp_list.remove(target)
+        X = data[temp_list]
+        discrete_features = [features_map[feature].get_type() != FeatureType.CONTINUOUS for feature in temp_list]
+        f_scores = None
+        if features_map[target].get_type() == FeatureType.CONTINUOUS:
+            f_scores = mutual_info_regression(X, data[target], discrete_features=discrete_features)
+        else:
+            f_scores = mutual_info_classif(X, data[target].astype(int), discrete_features=discrete_features)
+        for j in range(i):
+            scores[i][j] = f_scores[j]
+        for j in range(i+1,features_num):
+            scores[i][j] = f_scores[j-1]
+        print_to_file('{},{}'.format(feature_list[i], ','.join([str(x) for x in scores[i]])), 'mutual.txt')
+    return scores
+
 
 
 def mutal_information_filter(data, feature_list, features_map):
     print_to_file(f' Computing Mutual Information Scores', 'mutual.txt')
     scores = np.zeros((len(feature_list), len(feature_list)))
     print_to_file(',{}'.format(','.join(feature_list)), 'mutual.txt')
-    for i, feature in enumerate(feature_list):
-        for j, feature2 in enumerate(feature_list):
+    for i in range(len(feature_list)):
+        for j in range(i):
+            feature1_type = features_map[feature_list[i]].get_type()
+            feature2_type = features_map[feature_list[j]].get_type()
+            if not feature1_type == feature2_type:
+                continue
+            if feature1_type == FeatureType.CONTINUOUS:
+                scores[i][j] = mutual_info_regression()
             scores[i][j] = normalized_mutual_info_score(data[feature], data[feature2]) if i != j else 0
         print_to_file('{},{}'.format(feature_list[i], ','.join([str(x) for x in scores[i]])), 'mutual.txt')
     #print_to_file(f' final scores:\n{scores}\n end', 'mutual.txt')

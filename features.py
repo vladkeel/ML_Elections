@@ -3,8 +3,9 @@ import globals
 
 
 class FeatureType(Enum):
-    NOMINAL = 1
-    CATEGORICAL = 2
+    CONTINUOUS = 1
+    DISCRETE = 2
+    CATEGORICAL = 3
 
 
 def remove_prefix(full, prx):
@@ -33,10 +34,13 @@ class CategoricalFeature(Feature):
             if series[feat] == 1:
                 return remove_prefix(feat, super(CategoricalFeature, self).feature_name)
 
+    def get_type(self):
+        return self.feature_type
+
 
 class NominalFeature(Feature):
-    def __init__(self, feature, name):
-        super(NominalFeature, self).__init__(FeatureType.NOMINAL, name)
+    def __init__(self, feature, name, type):
+        super(NominalFeature, self).__init__(type, name)
         self.mean = feature.mean()
         self.median = feature.median()
         self.Q1 = feature.quantile(0.25)
@@ -48,12 +52,17 @@ class NominalFeature(Feature):
     def replacement(self):
         return self.mean
 
+    def get_type(self):
+        return self.feature_type
+
 
 def map_feature(name, feature):
     if name in globals.categorical_features:
         return CategoricalFeature(feature, name)
+    elif name in globals.discrete_features:
+        return NominalFeature(feature, name, FeatureType.DISCRETE)
     else:
-        return NominalFeature(feature, name)
+        return NominalFeature(feature, name, FeatureType.CONTINUOUS)
 
 
 def map_features(data):
