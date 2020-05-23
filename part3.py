@@ -1,6 +1,6 @@
 from features import map_features
 import manipulators
-from utils import data_get_label, load_data, split_data
+from utils import data_get_label, load_data, split_data, save_data
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -65,4 +65,11 @@ def main():
     train_x, train_y, val_x, val_y, test_x, test_y = load_and_select()
     train_x, train_y, val_x, val_y, test_x, test_y = prepare_data(train_x, train_y, val_x, val_y, test_x, test_y)
 
+    save_data(train_x, 'train_x.csv')
+    save_data(train_y, 'train_y.csv')
+    save_data(val_x, 'val_x.csv')
+    save_data(val_y, 'val_y.csv')
+    save_data(test_x, 'test_x.csv')
+    save_data(test_y, 'test_y.csv')
 
+    # Make train here...

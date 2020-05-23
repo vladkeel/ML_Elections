@@ -13,6 +13,10 @@ def load_data(filename):
     return data
 
 
+def save_data(data, filename):
+    data.to_csv(filename, index=False)
+
+
 def split_data(data):
     data_size = len(data.index)
     indices = list(range(data_size))
