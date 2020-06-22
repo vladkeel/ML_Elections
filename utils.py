@@ -2,6 +2,7 @@ import pandas as pd
 from random import shuffle
 import matplotlib.pyplot as plt
 from features import CategoricalFeature
+from sklearn.metrics import silhouette_score
 
 
 def data_get_label(data):
@@ -50,3 +51,32 @@ def test_with_clf(train_x, train_y, test_x, test_y, features, feature_map, clf):
     y_pred = clf.predict(test_x[all_features])
     res = sum([1 for i in range(len(y_pred)) if y_pred[i] == train_y.iloc[i]])/len(y_pred)
     return res
+
+
+def create_coalition(data, predicted_cluster):
+    last_predicted = predicted_cluster.copy()
+    last_score = -2
+    max_score = -1
+    while max_score > last_score:
+        last_score = max_score
+        max_predicted = None
+        for i in range(max(last_predicted)):
+            for j in range(max(last_predicted)):
+                if i > j:
+                    new_prediction = connect_clusters(last_predicted, i, j)
+                    new_score = silhouette_score(data, new_prediction)
+                    if new_score > max_score:
+                        max_score = new_score
+                        max_predicted = new_prediction
+        if max_score > last_score:
+            last_predicted = max_predicted
+    return last_predicted
+
+
+# assumption i > j
+def connect_clusters(predicted_cluster, i, j):
+    predicted_copy = predicted_cluster.copy()
+    predicted_copy[predicted_copy == i] = j
+    if i != max(predicted_copy):
+        predicted_copy[predicted_copy == max(predicted_copy)] = i
+    return predicted_copy

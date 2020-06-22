@@ -1,3 +1,7 @@
+useful_features = ['Vote', 'Yearly_IncomeK', 'Number_of_differnt_parties_voted_for', 'Political_interest_Total_Score',
+                   'Avg_Satisfaction_with_previous_vote', 'Avg_monthly_income_all_years', 'Most_Important_Issue',
+                   'Overall_happiness_score', 'Avg_size_per_room', 'Weighted_education_rank']
+
 categorical_features = ['Age_group', 'Looking_at_poles_results', 'Gender', 'Married', 'Voting_Time',
                         'Will_vote_only_large_party', 'Most_Important_Issue', 'Main_transportation',
                         'Occupation', 'Financial_agenda_matters']
